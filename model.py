@@ -37,7 +37,6 @@ class Model(nn.Module):
 
     def embed(self, x):
 
-        print(x.shape)
         x = self.batch_norm(x)
 
         x = self.conv1(x)
@@ -49,7 +48,6 @@ class Model(nn.Module):
         x = self.conv3(x)
         x = F.leaky_relu(x)
 
-        print(x.shape)
         x = torch.flatten(x, 1) 
         
         x = self.fc(x)
