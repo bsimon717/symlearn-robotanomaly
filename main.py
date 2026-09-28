@@ -8,9 +8,9 @@ from torch.utils.data import TensorDataset, DataLoader
 import pickle
 from datetime import datetime
 
-from symlearn.classify.readout import Readout
-import symlearn.classify.utils as classify
-import symlearn.loss as loss
+from symbiotic_learning.classify.readout import Readout
+import symbiotic_learning.classify.utils as classify
+import symbiotic_learning.loss as loss
 
 from model import Model
 
