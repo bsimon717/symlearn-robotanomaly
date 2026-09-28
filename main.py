@@ -37,6 +37,7 @@ def main():
     parser.add_argument('--readout_hidden_dim', default=32, type=int)
     parser.add_argument('--readout_num_hidden', default=1, type=int)
     parser.add_argument('--num_heads', default=1, type=int)
+    parser.add_argument('--attn_dropout', default=0.0, type=float)
     parser.add_argument('--num_fc', default=2, type=int)
     parser.add_argument('--temp', default=1.0, type=float)
     parser.add_argument('--lamb', default=1.0, type=float, help='Responsibility parameter lambda. Enables blame loss term after uplift.')
@@ -59,6 +60,7 @@ def main():
     readout_hidden_dim = args.readout_hidden_dim
     readout_num_hidden = args.readout_num_hidden
     num_heads = args.num_heads
+    attn_dropout = args.attn_dropout
     num_fc = args.num_fc
     temp = args.temp
     lamb = args.lamb
@@ -107,7 +109,7 @@ def main():
         opts.append(opt_i)
         scheds.append(sched_i)
     
-    readout = Readout(hidden_dim=readout_hidden_dim, num_hidden=readout_num_hidden, num_classes=6, num_heads=num_heads, num_preR=num_preR, preR_dim=fc_channels)
+    readout = Readout(hidden_dim=readout_hidden_dim, num_hidden=readout_num_hidden, num_classes=6, num_heads=num_heads, num_preR=num_preR, preR_dim=fc_channels, attn_dropout=attn_dropout)
     readout.double()
     
     models.append(readout)
