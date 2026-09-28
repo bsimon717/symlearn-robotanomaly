@@ -1,15 +1,18 @@
-from model import Model
 import argparse
-from symlearn.classify.utils import *
-from symlearn.classify.Readout import Readout
-import symlearn.loss as loss
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
-
 import pickle
+from datetime import datetime
+
+from symlearn.classify.readout import Readout
+import symlearn.classify.utils as classify
+import symlearn.loss as loss
+
+from model import Model
 
 def main():
     torch.cuda.empty_cache()
@@ -32,6 +35,7 @@ def main():
     parser.add_argument('--fc_channels', default=16, type=int)
 
     parser.add_argument('--readout_hidden_dim', default=32, type=int)
+    parser.add_argument('--readout_num_hidden', default=1, type=int)
     parser.add_argument('--num_heads', default=1, type=int)
     parser.add_argument('--num_fc', default=2, type=int)
     parser.add_argument('--temp', default=1.0, type=float)
@@ -53,6 +57,7 @@ def main():
     fc_channels = args.fc_channels
 
     readout_hidden_dim = args.readout_hidden_dim
+    readout_num_hidden = args.readout_num_hidden
     num_heads = args.num_heads
     num_fc = args.num_fc
     temp = args.temp
@@ -102,7 +107,7 @@ def main():
         opts.append(opt_i)
         scheds.append(sched_i)
     
-    readout = Readout(input_dim=input_dim, hidden_dim=readout_hidden_dim, num_classes=6, dropout=0.0, num_heads=num_heads, num_preR=num_preR, preR_dim=fc_channels)
+    readout = Readout(input_dim=input_dim, hidden_dim=readout_hidden_dim, num_hidden=readout_num_hidden, num_classes=6, dropout=0.0, num_heads=num_heads, num_preR=num_preR, preR_dim=fc_channels)
     readout.double()
     
     models.append(readout)
@@ -122,7 +127,7 @@ def main():
     print('\t-Number of Trainable Parameters in Readout Block: ', num_trainable_params_readout)
     print()
 
-    train(epochs, models, opts, scheds, data_loaders, collab_params, temp, criterion, uplift=uplift, eps=1e-7, lamb=lamb, save_path=save_path)
+    classify.train(epochs, models, opts, scheds, data_loaders, collab_params, temp, criterion, uplift=uplift, eps=1e-7, lamb=lamb, save_path=save_path, save_best=True)
 
 if __name__ == '__main__':
     main()

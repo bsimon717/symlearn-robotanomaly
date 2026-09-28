@@ -47,7 +47,7 @@ class Model(nn.Module):
 
         x = self.conv3(x)
         x = F.leaky_relu(x)
-        
+
         x = torch.flatten(x, 1) 
         
         x = self.fc(x)
