@@ -107,7 +107,7 @@ def main():
         opts.append(opt_i)
         scheds.append(sched_i)
     
-    readout = Readout(input_dim=input_dim, hidden_dim=readout_hidden_dim, num_hidden=readout_num_hidden, num_classes=6, dropout=0.0, num_heads=num_heads, num_preR=num_preR, preR_dim=fc_channels)
+    readout = Readout(hidden_dim=readout_hidden_dim, num_hidden=readout_num_hidden, num_classes=6, dropout=0.0, num_heads=num_heads, num_preR=num_preR, preR_dim=fc_channels)
     readout.double()
     
     models.append(readout)
