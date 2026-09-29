@@ -1,0 +1,4 @@
+Total Number of Trainable Parameters: 400
+	Total pre-Readout Trainable Parameters: 274
+		-Number of Trainable Parameters per pre-Readout Model: 137
+	Number of Trainable Parameters in Readout Block: 126

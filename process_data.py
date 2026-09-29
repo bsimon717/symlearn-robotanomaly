@@ -121,13 +121,9 @@ def main():
         if i == 0:
 
             if max_idx > len(dataset_IMU):
-                print('Offset thing happened:')
-                print('Current Offset', nominal_offset)
                 train_offset = (nominal_offset+max_idx)//len(dataset_IMU)
-                print("Modulo'd Offset", train_offset)
             else:
                 train_offset = nominal_offset
-                print("Offset thing didn't happen")
                 
             train_df.append( df.iloc[train_offset:num_train_samples+train_offset] )
             val_df.append( df.iloc[num_train_samples+train_offset:num_train_samples+num_val_samples+train_offset] )

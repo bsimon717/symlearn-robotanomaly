@@ -1,3 +1,4 @@
+import os
 import argparse
 import numpy as np
 import torch
@@ -24,21 +25,21 @@ def main():
                     description='main.py: Robot Anomaly Classification with Symbiotic Learning.',
                     epilog='Full description TBD.')
 
-    parser.add_argument('-n', '--num_preR', default=3, type=int)
+    parser.add_argument('-n', '--num_preR', default=2, type=int)
     parser.add_argument('-c', '--collab_params', nargs='*', type=float, help='Collaboration parameters. Specify <num> values in the range (0,1).')
     
     parser.add_argument('--comment', default='', type=str)
 
-    parser.add_argument('--seq_len', default=32, type=int)
-    parser.add_argument('--kernel_size', default=32, type=int)
-    parser.add_argument('--conv_channels', default=32, type=int)
-    parser.add_argument('--fc_channels', default=16, type=int)
+    parser.add_argument('--seq_len', default=8, type=int)
+    parser.add_argument('--kernel_size', default=2, type=int)
+    parser.add_argument('--conv_channels', default=2, type=int)
+    parser.add_argument('--fc_channels', default=2, type=int)
 
-    parser.add_argument('--readout_hidden_dim', default=32, type=int)
+    parser.add_argument('--readout_hidden_dim', default=2, type=int)
     parser.add_argument('--readout_num_hidden', default=1, type=int)
     parser.add_argument('--num_heads', default=1, type=int)
     parser.add_argument('--attn_dropout', default=0.0, type=float)
-    parser.add_argument('--num_fc', default=2, type=int)
+    parser.add_argument('--num_fc', default=1, type=int)
     parser.add_argument('--temp', default=1.0, type=float)
     parser.add_argument('--lamb', default=1.0, type=float, help='Responsibility parameter lambda. Enables blame loss term after uplift.')
     
@@ -78,7 +79,9 @@ def main():
         save_path = f'./sym_logs/{date_and_time}_{comment}'
     else:
         save_path = f'./sym_logs/{date_and_time}'
-        
+
+    os.mkdir(save_path)
+    
     models = []
     opts = []
     scheds = []
@@ -129,6 +132,12 @@ def main():
     print('\t-Number of Trainable Parameters in Readout Block: ', num_trainable_params_readout)
     print()
 
+    with open(f"{save_path}/param_breakdown.txt", "w", encoding="utf-8") as file:
+        file.write(f"Total Number of Trainable Parameters: {num_preR*num_trainable_params+num_trainable_params_readout}\n")
+        file.write(f"\tTotal pre-Readout Trainable Parameters: {num_preR*num_trainable_params}\n")
+        file.write(f"\t\t-Number of Trainable Parameters per pre-Readout Model: {num_trainable_params}\n")
+        file.write(f"\tNumber of Trainable Parameters in Readout Block: {num_trainable_params_readout}")
+        
     classify.train(epochs, models, opts, scheds, data_loaders, collab_params, temp, criterion, uplift=uplift, eps=1e-7, lamb=lamb, save_path=save_path, save_best=True)
 
 if __name__ == '__main__':
